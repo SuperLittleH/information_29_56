@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
+from flask_wtf.csrf import CSRFProtect
 
 class Config(object):
     """配置文件的加载"""
@@ -25,6 +26,9 @@ db = SQLAlchemy(app)
 
 # 创建连接到reids数据库对象
 redis_store = StrictRedis(host=Config.REDIS_HOST,port=Config.REDIS_PORT)
+
+# 开启CSRF保护
+CSRFProtect(app)
 
 @app.route('/')
 def index():
