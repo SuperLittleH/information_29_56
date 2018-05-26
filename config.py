@@ -1,4 +1,5 @@
 from redis import StrictRedis
+import logging
 class Config(object):
     """配置文件的加载"""
     # 项目秘钥
@@ -27,18 +28,23 @@ class Config(object):
 # 以下代码是封装不同开发环境的配置信息
 class DevlopmentConfig(Config):
     """开发环境"""
-    pass #开发环境和父类基本一致
+     #开发环境和父类基本一致
+    # 开发环境的日志等级
+    LEVEL_LOG = logging.DEBUG
 
 class ProductionConfig(Config):
     """生产环境"""
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@127.0.0.1:3306/information_pro_29'
+    # 生产环境的日志等级
+    LEVEL_LOG = logging.ERROR
 
 class UnittestConfig(Config):
     """测试环境"""
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@127.0.0.1:3306/information_case_29'
-
+    # 测试环境下的日志等级
+    LEVEL_LOG = logging.DEBUG
 
 # 创建字典，存储关键字对应的类名
 configs = {
