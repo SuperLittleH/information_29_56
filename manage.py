@@ -11,6 +11,7 @@ manager = Manager(app)
 # 让迁移和app和数据库建立关联
 Migrate(app,db)
 
+
 # 将数据库迁移到一个脚本添加到manager
 manager.add_command('mysql',MigrateCommand)
 
