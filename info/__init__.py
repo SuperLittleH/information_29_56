@@ -14,7 +14,6 @@ app.config.from_object(ProductionConfig)
 # 创建连接到mysql数据库的对象
 db = SQLAlchemy(app)
 
-
 # 创建连接到reids数据库对象
 redis_store = StrictRedis(host=ProductionConfig.REDIS_HOST,port=ProductionConfig.REDIS_PORT)
 
