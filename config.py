@@ -39,3 +39,10 @@ class UnittestConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@127.0.0.1:3306/information_case_29'
 
+
+# 创建字典，存储关键字对应的类名
+configs = {
+    'dev':DevlopmentConfig,
+    'pro':ProductionConfig,
+    'unit':UnittestConfig
+}
