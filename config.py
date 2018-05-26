@@ -22,3 +22,20 @@ class Config(object):
     SESSION_USE_SIGNER = True
     #设置过期时间,要求SESSION_PERMANENT,True,默认是31天
     PERMSNENT_SESSIPN_LIFETIME = 60*60*24 #一天有效期
+
+
+# 以下代码是封装不同开发环境的配置信息
+class DevlopmentConfig(Config):
+    """开发环境"""
+    pass #开发环境和父类基本一致
+
+class ProductionConfig(Config):
+    """生产环境"""
+    DEBUG = False
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@127.0.0.1:3306/information_pro_29'
+
+class UnittestConfig(Config):
+    """测试环境"""
+    TESTING = True
+    SQLALCHEMY_DATABASE_URI = 'mysql://root:mysql@127.0.0.1:3306/information_case_29'
+
