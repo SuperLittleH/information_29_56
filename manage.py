@@ -14,6 +14,7 @@ Migrate(app,db)
 # 将数据库迁移到一个脚本添加到manager
 manager.add_command('mysql',MigrateCommand)
 
+
 @app.route('/')
 def index():
     # 测试redis数据库
