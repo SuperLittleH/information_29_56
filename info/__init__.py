@@ -7,7 +7,7 @@ from flask_session import Session
 from config import configs
 import logging
 from logging.handlers import RotatingFileHandler
-from info.modules.index import index_blue
+
 
 
 def setup_log(level):
@@ -25,6 +25,7 @@ def setup_log(level):
 
 # 创建SQLAlchemy对象
 db = SQLAlchemy()
+redis_store = None
 
 def create_app(config_name):
     # 根据创建app时的配置环境，加载日志等级
@@ -38,6 +39,7 @@ def create_app(config_name):
     db.init_app(app)
 
     # 创建连接到reids数据库对象
+    global redis_store
     redis_store = StrictRedis(host=configs[config_name].REDIS_HOST,port=configs[config_name].REDIS_PORT)
 
     # 开启CSRF保护
@@ -46,6 +48,8 @@ def create_app(config_name):
     # 指定session数据存储在后端的位置
     Session(app)
 
+
+    from info.modules.index import index_blue
     # 注册蓝图
     app.register_blueprint(index_blue)
     return app
