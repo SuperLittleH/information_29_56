@@ -7,7 +7,7 @@ from flask_session import Session
 from config import configs
 import logging
 from logging.handlers import RotatingFileHandler
-from info.modules.index import index_blu
+from info.modules.index import index_blue
 
 
 def setup_log(level):
@@ -47,5 +47,5 @@ def create_app(config_name):
     Session(app)
 
     # 注册蓝图
-    app.register_blueprint(index_blu)
+    app.register_blueprint(index_blue)
     return app
