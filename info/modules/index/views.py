@@ -8,6 +8,4 @@ def index():
     # from flask import session
     # 会将('age':'2')写入cookie
     # session['age'] = '2'
-
-
     return "index"
