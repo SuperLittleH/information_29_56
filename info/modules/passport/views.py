@@ -7,6 +7,60 @@ import re,random,datetime
 from info.libs.yuntongxun.sms import CCP
 from info.models import User
 
+@passport_blue.route('login',methods=['POST'])
+def login():
+    """登陆
+    1.获取参数
+    2.校验参数
+    3.使用手机号查询用户信息
+    4.校验用户密码
+    5.将状态保持信息写入session
+    6.记录最后一次登陆的时间
+    7.响应登陆
+    """
+
+    # 1.获取参数
+    json_dict = request.json
+    mobile = json_dict.get('mobile')
+    password = json_dict.get('password')
+
+    # 2.校验参数
+    if not all([mobile,password]):
+        return jsonify(errno=response_code.RET.PARAMERR,errmsg='缺少参数')
+    if not re.match(r'^1[345678][0-9]{9}$', mobile):
+        return jsonify(errno=response_code.RET.PARAMERR, errmsg='手机号格式错误')
+
+    # 3.使用手机号查询用户信息
+    try:
+        user = User.query.filter(User.mobile==mobile).first()
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=response_code.RET.DBERR,errmsg='查询用户数据失败')
+    if not user:
+        return jsonify(errno=response_code.RET.PARAMERR,errmsg='用户名或密码错误')
+
+        # 4.校验用户密码
+    if not user.check_passowrd(password):
+        return jsonify(errno=response_code.RET.PWDERR, errmsg='用户名或密码错误')
+
+        # 5.讲状态保持信息写入session
+    session['user_id'] = user.id
+    session['mobile'] = user.mobile
+    session['nick_name'] = user.nick_name
+
+    # 6.记录最后一次登录的时间
+    user.last_login = datetime.datetime.now()
+    try:
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        return jsonify(errno=response_code.RET.DBERR, errmsg='记录最后一次登陆时间失败')
+
+    # 7.响应登陆
+    return jsonify(errno=response_code.RET.OK, errmsg='登陆成功')
+
+
 @passport_blue.route('/register', methods=['POST'])
 def register():
     """注册
