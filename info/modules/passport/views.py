@@ -55,12 +55,12 @@ def register():
     user.last_login = datetime.datetime.now()
 
     # 6.将模型数据同步到数据库
-    try:
-        db.session.add(user)
-        db.session.commit()
-    except Exception as e:
-        current_app.logger.error(e)
-        return jsonify(errno=response_code.RET.DBERR, errmsg='保存注册数据失败')
+    # try:
+    #     db.session.add(user)
+    #     db.session.commit()
+    # except Exception as e:
+    #     current_app.logger.error(e)
+    #     return jsonify(errno=response_code.RET.DBERR, errmsg='保存注册数据失败')
 
     # 7.保存session,实现状态保持，注册即登录
     session['user_id'] = user.id
@@ -107,7 +107,7 @@ def sms_code():
 
     # 6.存储短信验证码到redis，方便比较时注册
     try:
-        redis_store.set('SMS'+mobile,sms_code,constants.SMS_CODE_REDIS_EXPIRES)
+        redis_store.set('SMS:'+mobile,sms_code,constants.SMS_CODE_REDIS_EXPIRES)
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=response_code.RET.DBERR, errmsg='保存短信验证码失败')

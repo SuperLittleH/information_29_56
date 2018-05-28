@@ -154,9 +154,27 @@ $(function(){
         }
 
         // 发起注册请求
-
+        var params = {
+            'mobile':mobile,
+            'smscode':smscode,
+            'password':password
+        };
+        $.ajax({
+            url:'/passport/register',
+            type:'post',
+            data:JSON.stringify(params),
+            contentType:'application/json',
+            success:function (response) {
+                if (response.errno=='0'){
+                    // 注册成功
+                    location.reload();
+                }else {
+                    alert(response.errmsg);
+                }
+            }
+        });
     })
-})
+});
 
 var imageCodeId = ""
 
