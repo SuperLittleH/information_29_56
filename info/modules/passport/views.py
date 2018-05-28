@@ -13,6 +13,7 @@ def image_code():
     # 4.保存图片验证码到redis
     # 5.修改image的ContentType = 'image/jpg'
     # 6.响应图片验证码
+
     # 1.接受参数
     imageCodeId = request.args.get('imageCodeId')
     # 2.效验参数
@@ -27,7 +28,7 @@ def image_code():
         current_app.logger.error(e)
         abort(500)
     # 5.修改image
-    response = make_response()
+    response = make_response(image)
     response.headers['Content-Type'] = 'image/jpg'
 
 
