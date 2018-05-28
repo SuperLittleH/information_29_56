@@ -102,10 +102,10 @@ def sms_code():
         return jsonify(errno=response_code.RET.PARAMERR, errmsg='输入验证码有误')
 
     # 5.如果对比成功，生成短信验证码，并发送短信
-    # sms_code = '%06d'% random.randint(0,999999)
-    # result = CCP().send_template_sms(mobile,[sms_code,5],1)
-    # if result != 0:
-    #     return jsonify(errno=response_code.RET.THIRDERR, errmsg='发送短信验证码失败')
+    sms_code = '%06d'% random.randint(0,999999)
+    result = CCP().send_template_sms(mobile,[sms_code,5],1)
+    if result != 0:
+        return jsonify(errno=response_code.RET.THIRDERR, errmsg='发送短信验证码失败')
 
     # 6.存储短信验证码到redis，方便比较时注册
     try:
