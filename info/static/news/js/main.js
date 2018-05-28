@@ -167,7 +167,7 @@ $(function(){
             success:function (response) {
                 if (response.errno=='0'){
                     // 注册成功
-                    location.reload();
+                   location.reload();
                 }else {
                     alert(response.errmsg);
                 }
@@ -218,9 +218,30 @@ function sendSMSCode() {
         contentType :'application/json',
         success:function (response) {
             if (response.errno == '0'){
-                alert(response.errmsg);
+               var num = 15;
+                    var t = setInterval(function ()  {
+                        if (num == 1) {
+                            // 倒计时完成,清除定时器器
+                            clearInterval(t);
+                            // 重新⽣生成验证码
+                            generateImageCode();
+                            // 重置内容
+                            $(".get_code").html('点击获取验证码');
+                            // 重新添加点击事件
+                            $(".get_code").attr("onclick", "sendSMSCode();");
+                        } else {
+                            // 正在倒计时，显示秒数
+                            $(".get_code").html(num + '秒');
+                        }
+                        // 每⼀一秒减⼀一
+                        num -= 1;
+                    }, 1000);
             }else{
                 alert(response.errmsg);
+                 // 重新生成验证码
+                generateImageCode();
+                // 重新添加点击事件
+                $(".get_code").attr("onclick", "sendSMSCode();");
             }
         }
     });

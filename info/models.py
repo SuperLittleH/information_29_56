@@ -91,6 +91,18 @@ class User(BaseModel, db.Model):
             "last_login": self.last_login.strftime("%Y-%m-%d %H:%M:%S"),
         }
         return resp_dict
+    @property
+    def password(self):
+        raise AttributeError('can not read')
+
+    @password.setter
+    def password(self, value):
+        """直接调用该属性setter的方法加密的过程，封装在setter方法
+        提示：属性名字不要和password——hash重名
+        value:在外界在调用方法传入的明文
+        """
+        self.password_hash = generate_password_hash(value)
+
 
 
 class News(BaseModel, db.Model):

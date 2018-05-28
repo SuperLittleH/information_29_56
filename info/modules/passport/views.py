@@ -49,18 +49,19 @@ def register():
     user = User()
     user.mobile = mobile
     user.nick_name = mobile
-    # TODO 密码需要加密后再存储
-    # user.password_hash = password
+    # 加密后再存储
+    user.password_hash = password
     # 记录最后一次登录的时间
     user.last_login = datetime.datetime.now()
 
     # 6.将模型数据同步到数据库
-    # try:
-    #     db.session.add(user)
-    #     db.session.commit()
-    # except Exception as e:
-    #     current_app.logger.error(e)
-    #     return jsonify(errno=response_code.RET.DBERR, errmsg='保存注册数据失败')
+    try:
+        db.session.add(user)
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+        return jsonify(errno=response_code.RET.DBERR, errmsg='保存注册数据失败')
 
     # 7.保存session,实现状态保持，注册即登录
     session['user_id'] = user.id
@@ -100,10 +101,10 @@ def sms_code():
         return jsonify(errno=response_code.RET.PARAMERR, errmsg='输入验证码有误')
 
     # 5.如果对比成功，生成短信验证码，并发送短信
-    sms_code = '%06d'% random.randint(0,999999)
-    result = CCP().send_template_sms(mobile,[sms_code,5],1)
-    if result != 0:
-        return jsonify(errno=response_code.RET.THIRDERR, errmsg='发送短信验证码失败')
+    # sms_code = '%06d'% random.randint(0,999999)
+    # result = CCP().send_template_sms(mobile,[sms_code,5],1)
+    # if result != 0:
+    #     return jsonify(errno=response_code.RET.THIRDERR, errmsg='发送短信验证码失败')
 
     # 6.存储短信验证码到redis，方便比较时注册
     try:
