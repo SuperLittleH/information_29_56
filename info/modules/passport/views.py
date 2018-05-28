@@ -103,9 +103,10 @@ def sms_code():
 
     # 5.如果对比成功，生成短信验证码，并发送短信
     sms_code = '%06d'% random.randint(0,999999)
-    result = CCP().send_template_sms(mobile,[sms_code,5],1)
-    if result != 0:
-        return jsonify(errno=response_code.RET.THIRDERR, errmsg='发送短信验证码失败')
+    current_app.logger.debug(sms_code)
+    # result = CCP().send_template_sms(mobile,[sms_code,5],1)
+    # if result != 0:
+    #     return jsonify(errno=response_code.RET.THIRDERR, errmsg='发送短信验证码失败')
 
     # 6.存储短信验证码到redis，方便比较时注册
     try:
@@ -137,6 +138,7 @@ def image_code():
         abort(403)
     # 3.生成图片验证码
     name,text,image = captcha.generate_captcha()
+    current_app.logger.debug(text)
     # 4.保存图片验证码redis
     try:
         redis_store.set('ImageCode:'+imageCodeId,text,constants.IMAGE_CODE_REDIS_EXPIRES)

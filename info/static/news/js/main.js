@@ -218,7 +218,7 @@ function sendSMSCode() {
         contentType :'application/json',
         success:function (response) {
             if (response.errno == '0'){
-               var num = 15;
+               var num = 60;
                     var t = setInterval(function ()  {
                         if (num == 1) {
                             // 倒计时完成,清除定时器器
