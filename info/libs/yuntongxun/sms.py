@@ -70,7 +70,7 @@ class CCP(object):
             return -1
 
 
-if __name__ == '__main__':
-    ccp = CCP()
-    # 注意： 测试的短信模板编号为1
-    ccp.send_template_sms('15971306907', ['666', 5], 1)
+# if __name__ == '__main__':
+#     ccp = CCP()
+#     # 注意： 测试的短信模板编号为1
+#     ccp.send_template_sms('15971306907', ['666', 5], 1)
