@@ -1,9 +1,9 @@
 # 注册和登陆
 from . import passport_blue
-from flask import request,abort,current_app,make_response,jsonify
+from flask import request,abort,current_app,make_response,jsonify,json
 from info.utils.captcha.captcha import captcha
 from info import redis_store,constants,response_code
-import json,re,random
+import re,random
 from info.libs.yuntongxun.sms import CCP
 
 
@@ -21,7 +21,7 @@ def sms_code():
     if not all([mobile,image_code,image_code_id]):
         return jsonify(errno=response_code.RET.PARAMERR,errmsg='缺少参数')
     if not re.match(r'^1[345678][0-9]{9}$',mobile):
-        return jsonify(errno=response_code.RET.PARAMERR, errmsg='缺少参数')
+        return jsonify(errno=response_code.RET.PARAMERR, errmsg='手机号码不正确')
 
     # 3.查询服务器存储的图片验证码
     try:
@@ -31,7 +31,7 @@ def sms_code():
         return jsonify(errno=response_code.RET.DBERR, errmsg='查询图片验证码失败')
     if not image_code_id:
       return jsonify(errno=response_code.RET.NODATA, errmsg='图片验证码不存在')
-
+    print(image_code_server,image_code_client)
     # 4.跟客户端传入的图片验证码对比
     if image_code_server.lower() != image_code_client.lower():
         return jsonify(errno=response_code.RET.PARAMERR, errmsg='输入验证码有误')
@@ -74,7 +74,7 @@ def image_code():
     name,text,image = captcha.generate_captcha()
     # 4.保存图片验证码redis
     try:
-        redis_store.set('imageCode'+imageCodeId,text,constants.IMAGE_CODE_REDIS_EXPIRES)
+        redis_store.set('ImageCode:'+imageCodeId,text,constants.IMAGE_CODE_REDIS_EXPIRES)
     except Exception as e:
         current_app.logger.error(e)
         abort(500)
