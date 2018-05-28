@@ -22,6 +22,7 @@ def register():
     # 1.接受参数（手机号，短信验证码，密码明文）
     # request.json : 封装了json.loads(request.data)
     json_dict = request.json
+    # 接受手机号
     mobile = json_dict.get('mobile')
     smscode_client = json_dict.get('smscode')
     password = json_dict.get('password')
