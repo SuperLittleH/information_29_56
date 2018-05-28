@@ -66,9 +66,6 @@ class User(BaseModel, db.Model):
     def password(self, value):
         self.password_hash = generate_password_hash(value)
 
-    def check_passowrd(self, password):
-        return check_password_hash(self.password_hash, password)
-
     def to_dict(self):
         resp_dict = {
             "id": self.id,
@@ -102,6 +99,9 @@ class User(BaseModel, db.Model):
         value:在外界在调用方法传入的明文
         """
         self.password_hash = generate_password_hash(value)
+
+    def check_passowrd(self, password):
+        return check_password_hash(self.password_hash, password)
 
 
 

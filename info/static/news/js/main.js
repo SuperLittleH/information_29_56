@@ -117,9 +117,27 @@ $(function(){
         if (!password) {
             $("#login-password-err").show();
             return;
-        }
+        };
 
         // 发起登录请求
+         var params = {
+            "mobile":mobile,
+            "password":password
+        };
+        $.ajax({
+            url:'/passport/login',
+            type:'post',
+            data:JSON.stringify(params),
+            contentType:'application/json',
+            success:function (response) {
+                if (response.errno == '0'){
+                    // 登陆成功后刷新当前页面
+                    location.reload();
+                }else {
+                    alert(response.errmsg);
+                }
+            }
+        })
     })
 
 

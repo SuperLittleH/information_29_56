@@ -7,7 +7,7 @@ import re,random,datetime
 from info.libs.yuntongxun.sms import CCP
 from info.models import User
 
-@passport_blue.route('login',methods=['POST'])
+@passport_blue.route('/login',methods=['POST'])
 def login():
     """登陆
     1.获取参数
@@ -41,6 +41,7 @@ def login():
 
         # 4.校验用户密码
     if not user.check_passowrd(password):
+        current_app.logger.debug(user.check_passowrd(password))
         return jsonify(errno=response_code.RET.PWDERR, errmsg='用户名或密码错误')
 
         # 5.讲状态保持信息写入session
@@ -105,7 +106,7 @@ def register():
     user.mobile = mobile
     user.nick_name = mobile
     # 加密后再存储
-    user.password_hash = password
+    user.password = password
     # 记录最后一次登录的时间
     user.last_login = datetime.datetime.now()
 
@@ -158,9 +159,9 @@ def sms_code():
     # 5.如果对比成功，生成短信验证码，并发送短信
     sms_code = '%06d'% random.randint(0,999999)
     current_app.logger.debug(sms_code)
-    # result = CCP().send_template_sms(mobile,[sms_code,5],1)
-    # if result != 0:
-    #     return jsonify(errno=response_code.RET.THIRDERR, errmsg='发送短信验证码失败')
+    result = CCP().send_template_sms(mobile,[sms_code,5],1)
+    if result != 0:
+        return jsonify(errno=response_code.RET.THIRDERR, errmsg='发送短信验证码失败')
 
     # 6.存储短信验证码到redis，方便比较时注册
     try:
@@ -192,7 +193,8 @@ def image_code():
         abort(403)
     # 3.生成图片验证码
     name,text,image = captcha.generate_captcha()
-    current_app.logger.debug(text)
+    # current_app.logger.debug(text)
+
     # 4.保存图片验证码redis
     try:
         redis_store.set('ImageCode:'+imageCodeId,text,constants.IMAGE_CODE_REDIS_EXPIRES)
