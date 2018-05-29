@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
-from flask_wtf.csrf import CSRFProtect
+from flask_wtf.csrf import CSRFProtect,generate_csrf
 from flask_session import Session
 # from config import Config,DevlopmentConfig,ProductionConfig,UnittestConfig
 from config import configs
@@ -44,7 +44,17 @@ def create_app(config_name):
 
 
     # 开启CSRF保护
-    # CSRFProtect(app)
+    CSRFProtect(app)
+
+    # 使用请求钩子实现每个相应中写入cookie
+    @app.after_request
+    def setup_csrftoken(response):
+        """生成csrf_token"""
+        csrf_token = generate_csrf()
+
+        # 将csrf_token的值写入到cookie
+        response.set_cookie('csrf_token', csrf_token)
+        return response
 
     # 指定session数据存储在后端的位置
     Session(app)

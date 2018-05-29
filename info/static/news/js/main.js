@@ -129,6 +129,7 @@ $(function(){
             type:'post',
             data:JSON.stringify(params),
             contentType:'application/json',
+            headers:{'X-CSRFToken':getCookie('csrf_token')}, //在请求头中带上csrf_token
             success:function (response) {
                 if (response.errno == '0'){
                     // 登陆成功后刷新当前页面
@@ -182,6 +183,7 @@ $(function(){
             type:'post',
             data:JSON.stringify(params),
             contentType:'application/json',
+            headers:{'X-CSRFToken':getCookie('csrf_token')}, //在请求头中带上csrf_token
             success:function (response) {
                 if (response.errno=='0'){
                     // 注册成功
@@ -246,6 +248,7 @@ function sendSMSCode() {
         type:'post',
         data:JSON.stringify(params),
         contentType :'application/json',
+        headers:{'X-CSRFToken':getCookie('csrf_token')}, //在请求头中带上csrf_token
         success:function (response) {
             if (response.errno == '0'){
                var num = 60;
