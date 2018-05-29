@@ -7,6 +7,7 @@ from flask_session import Session
 from config import configs
 import logging
 from logging.handlers import RotatingFileHandler
+from info.utils.comment import do_ranK
 
 
 
@@ -55,6 +56,9 @@ def create_app(config_name):
         # 将csrf_token的值写入到cookie
         response.set_cookie('csrf_token', csrf_token)
         return response
+
+    # 将自定义的过滤器函数添加到app过滤器列表中
+    app.add_template_filter(do_ranK, 'rank')
 
     # 指定session数据存储在后端的位置
     Session(app)

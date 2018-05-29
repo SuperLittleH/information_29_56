@@ -2,6 +2,7 @@
 from . import index_blue
 from flask import render_template,current_app,session
 from info.models import User,News
+from info import constants
 
 @index_blue.route('/')
 def index():
