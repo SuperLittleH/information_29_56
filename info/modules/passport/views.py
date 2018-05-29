@@ -7,6 +7,23 @@ import re,random,datetime
 from info.libs.yuntongxun.sms import CCP
 from info.models import User
 
+
+@passport_blue.route('/logout',methods=['GET'])
+def logout():
+    """退出登录
+    清理session
+    """
+    try:
+        session.pop('user_id',None)
+        session.pop('mobile',None)
+        session.pop('nick_name',None)
+    except Exception as e:
+        current_app.logger.error(e)
+        jsonify(errno=response_code.RET.DBERR,errmsg="退出登录失败")
+
+    return jsonify(errno=response_code.RET.OK,errmsg='退出登录成功')
+
+
 @passport_blue.route('/login',methods=['POST'])
 def login():
     """登陆

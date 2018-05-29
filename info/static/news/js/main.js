@@ -194,6 +194,18 @@ $(function(){
     })
 });
 
+// 退出登录
+function logout() {
+    $.get('/passport/logout',function (response) {
+        if (response.errno == '0'){
+            // 退出登录成功
+            location.reload();
+        }else {
+            alert(response.errmsg);
+        }
+    })
+}
+
 var imageCodeId = ""
 
 // TODO 生成一个图片验证码的编号，并设置页面中图片验证码img标签的src属性
