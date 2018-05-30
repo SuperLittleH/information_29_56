@@ -5,6 +5,7 @@ from info import create_app,db,models
 
 # 创建app
 app = create_app('dev')
+
 # 创建脚本管理器对象
 manager = Manager(app)
 
