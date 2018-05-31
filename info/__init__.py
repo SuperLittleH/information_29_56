@@ -7,7 +7,7 @@ from flask_session import Session
 from config import configs
 import logging
 from logging.handlers import RotatingFileHandler
-from info.utils.comment import do_ranK
+
 
 
 
@@ -58,6 +58,7 @@ def create_app(config_name):
         return response
 
     # 将自定义的过滤器函数添加到app过滤器列表中
+    from info.utils.comment import do_ranK
     app.add_template_filter(do_ranK, 'rank')
 
     # 指定session数据存储在后端的位置
