@@ -1,9 +1,9 @@
 # 主页模板
 from . import index_blue
-from flask import render_template,current_app,session,request,jsonify
+from flask import render_template,current_app,session,request,jsonify,g
 from info.models import User,News,Category
 from info import constants,response_code
-
+from info.utils.comment import user_login_data
 
 @index_blue.route('/new_list')
 def index_news_list():
@@ -59,6 +59,7 @@ def index_news_list():
     return jsonify(errno=response_code.RET.OK, errmsg='ok', data=data)
 
 @index_blue.route('/')
+@user_login_data
 def index():
     """主页
     1.处理网页右上角的用户显示数据，当用户已登陆‘展示用户名  退出  反之 展示登陆 注册
@@ -66,14 +67,17 @@ def index():
     3.新闻分类
     """
     # 1.处理网页右上角的用户显示数据
-    user_id = session.get('user_id',None)
-    user = None
-    if user_id:
-    # 1.表示用户登陆,查询用户信息
-        try:
-            user = User.query.get(user_id)
-        except Exception as e:
-            current_app.logger.error(e)
+    # user_id = session.get('user_id',None)
+    # user = None
+    # if user_id:
+    # # 1.表示用户登陆,查询用户信息
+    #     try:
+    #         user = User.query.get(user_id)
+    #     except Exception as e:
+    #         current_app.logger.error(e)
+
+    # 使用装饰器的g变量取出登录信息
+    user = g.user
 
     # 2.新闻点击排行展示
     news_clicks = []
