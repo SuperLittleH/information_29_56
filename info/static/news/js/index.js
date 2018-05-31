@@ -51,7 +51,7 @@ $(function () {
                 cur_page +=1;
                 // 当当前页小于总页数时，就调用刷新数据
                 if (cur_page < total_page){
-                    updateNewsData()
+                    updateNewsData();
                 }
             }
         }
@@ -66,9 +66,9 @@ function updateNewsData() {
         // 每页多少不用传，默认10条
     };
     $.get('/new_list',params,function (response) {
+        // 将是否正在加载数据的标记设置为flase
+        data_querying = false;
         if(response.errno == '0'){
-            // 将是否正在加载数据的标记设置为flase
-            data_querying = false;
             // 记录总页数显示数据
             total_page = response.data.total_page
             if (cur_page == 1){
