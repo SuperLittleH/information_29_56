@@ -63,10 +63,13 @@ def create_app(config_name):
     # 指定session数据存储在后端的位置
     Session(app)
 
-
-    from info.modules.index import index_blue
     # 注册蓝图
+    from info.modules.index import index_blue
     app.register_blueprint(index_blue)
+    # 注册蓝图
     from info.modules.passport import passport_blue
     app.register_blueprint(passport_blue)
+    # 注册蓝图
+    from info.modules.news import news_blue
+    app.register_blueprint(news_blue)
     return app
