@@ -14,10 +14,12 @@
         <div class="header">
             <a href="#" class="logo fl"><img src="../../static/news/images/logo.png" alt="logo"></a>
             <ul class="menu fl">
-                {% for category in context.categorise %}
-                    <li class="active" data-cid="{{ category.id }}"><a href="javascript:;">{{ category.name }}</a></li>
-                {% else %}
-                    <li  data-cid="{{ category.id }}"><a href="javascript:;">{{ category.name }}</a></li>
+                {% for category in context.categories %}
+                    {% if loop.index == 1 %}
+                        <li class="active" data-cid="{{ category.id }}"><a href="javascript:;">{{ category.name }}</a></li>
+                    {% else %}
+                         <li data-cid="{{ category.id }}"><a href="javascript:;">{{ category.name }}</a></li>
+                    {% endif %}
                 {% endfor %}
             </ul>
             {% if context.user %}
