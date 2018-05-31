@@ -74,8 +74,7 @@ function updateNewsData() {
             if (cur_page == 1){
                 $('.list_con').html('')
             }
-            cur_page += 1
-              // 显示数据
+            // 显示数据
             for (var i=0;i<response.data.news_dict_list.length;i++) {
                 var news = response.data.news_dict_list[i]
                 var content = '<li>'

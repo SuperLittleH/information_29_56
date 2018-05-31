@@ -1,7 +1,7 @@
 # 主页模板
 from . import index_blue
 from flask import render_template,current_app,session,request,jsonify
-from info.models import User,News
+from info.models import User,News,Category
 from info import constants,response_code
 
 
@@ -63,6 +63,7 @@ def index():
     """主页
     1.处理网页右上角的用户显示数据，当用户已登陆‘展示用户名  退出  反之 展示登陆 注册
     2.新闻点击排行展示，在News 数据库表中查询，根据点击量clicks倒序
+    3.新闻分类
     """
     # 1.处理网页右上角的用户显示数据
     user_id = session.get('user_id',None)
@@ -81,11 +82,17 @@ def index():
     except Exception as e:
         current_app.logger.error(e)
 
+    # 3.新闻分类
+    try:
+        categories = Category.query.all()
+    except Exception as e:
+        current_app.logger.error(e)
 
     # 构造渲染模板的上下文数据
     context = {
         'user':user,
-        "news_clicks": news_clicks
+        "news_clicks": news_clicks,
+        'categories':categories
 
     }
 
