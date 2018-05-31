@@ -25,23 +25,29 @@
         <a href="javascript:;" class="collected block-center" style="display: none"><span class="out">已收藏</span><span class="over">取消收藏</span></a>
 
 
-        <div class="comment_form_logout">
-            登录发表你的评论
-        </div>
 
-        <form action="" class="comment_form">
+   {% if context.user%}
+        <form action="" class="comment_form" data-newsid="{{ context.news.id }}">
             <div class="person_pic">
-                <img src="../../static/news/images/cat.jpg" alt="用户图标">
+                <img src="{% if context.user.avatar_url %}
+                    {{ context.user.avatar_url }}
+                {% else %}
+                    ../../static/news/images/person01.png
+                {% endif %}" alt="用户图标">
             </div>
             <textarea placeholder="请发表您的评论" class="comment_input"></textarea>
             <input type="submit" name="" value="评 论" class="comment_sub">
         </form>
-
-
-        <div class="comment_count">
-            4条评论
+   {% else %}
+        <div class="comment_form_logout">
+            登录发表你的评论
         </div>
+   {% endif %}
 
+
+   <div class="comment_count">
+       {{ context.news.comments_count }}条评论
+   </div>
         <div class="comment_list_con">
             <div class="comment_list">
                 <div class="person_pic fl">

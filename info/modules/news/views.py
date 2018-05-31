@@ -1,5 +1,5 @@
 # 新闻详情
-from flask import  render_template,session,current_app
+from flask import  render_template,session,current_app,abort
 from . import news_blue
 from info.models import User,News
 from info import constants
@@ -9,6 +9,7 @@ def news_detail(news_id):
     """新闻详情
     1.查询用户信息
     2.点击排行
+    3.查询新闻详情
     """
     # 1.查询用户信息
     user_id = session.get('user_id', None)
@@ -27,10 +28,20 @@ def news_detail(news_id):
     except Exception as e:
         current_app.logger.error(e)
 
+    # 3.查询新闻详情
+    news = None
+    try:
+        news = News.query.get(news_id)
+    except Exception as e:
+        current_app.logger.error(e)
+
+    # 后续给404做个异常响应页面
+    if not news:
+        abort(404)
     context = {
         'user':user,
         'news_clicks':news_clicks,
-        'news':None
+        'news':news.to_dict()
     }
 
     # 渲染模板
