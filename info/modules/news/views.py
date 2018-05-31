@@ -1,7 +1,7 @@
 # 新闻详情
 from flask import  render_template,session,current_app,abort
 from . import news_blue
-from info.models import User,News
+from info.models import User,News,db
 from info import constants
 
 @news_blue.route('/detail/<int:news_id>')
@@ -38,6 +38,15 @@ def news_detail(news_id):
     # 后续给404做个异常响应页面
     if not news:
         abort(404)
+
+    # 4.累加点击量
+    news.clicks += 1
+    try:
+        db.session.commit()
+    except Exception as e:
+        current_app.logger.error(e)
+        db.session.rollback()
+
     context = {
         'user':user,
         'news_clicks':news_clicks,
