@@ -19,17 +19,10 @@ def news_detail(news_id):
     1.查询用户信息
     2.点击排行
     3.查询新闻详情
+    4.累加点击量
+    5.收藏和取消收藏
     """
     # 1.查询用户信息
-    # user_id = session.get('user_id', None)
-    # user = None
-    # if user_id:
-    #     # 1.表示用户登陆,查询用户信息
-    #     try:
-    #         user = User.query.get(user_id)
-    #     except Exception as e:
-    #         current_app.logger.error(e)
-
     # 使用装饰器的g变量读取登录信息
     user = g.user
 
@@ -59,10 +52,15 @@ def news_detail(news_id):
         current_app.logger.error(e)
         db.session.rollback()
 
+    # 5.收藏和取消收藏
+    is_collected = False
+
+
     context = {
         'user':user,
         'news_clicks':news_clicks,
-        'news':news.to_dict()
+        'news':news.to_dict(),
+        'is_collected':is_collected
     }
 
     # 渲染模板
