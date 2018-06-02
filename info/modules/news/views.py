@@ -56,6 +56,7 @@ def news_comment():
     except Exception as e:
         db.session.rollback()
         current_app.logger.error(e)
+        return jsonify(errno=response_code.RET.DBERR, errmsg="评论失败")
 
     # 6.响应评论结果
     return jsonify(errno=response_code.RET.OK, errmsg="ok",data=comment.to_dict())
