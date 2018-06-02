@@ -5,7 +5,7 @@ from info.models import User,News,Comment
 from info import constants,db,response_code
 from info.utils.comment import user_login_data
 
-@news_blue.route('/news_comment',methods=["POST"])
+@news_blue.route('/news_comment',methods=["GET","POST"])
 @user_login_data
 def news_comment():
     """新闻评论和回复评论"""
@@ -61,7 +61,7 @@ def news_comment():
     # 6.响应评论结果
     return jsonify(errno=response_code.RET.OK, errmsg="ok",data=comment.to_dict())
 
-@news_blue.route('/news_collect',methods=['POST'])
+@news_blue.route('/news_collect',methods=["GET",'POST'])
 @user_login_data
 def news_collect():
     """新闻收藏"""
@@ -152,12 +152,26 @@ def news_detail(news_id):
         if news in user.collection_news:
             is_collected = True
 
+    # 6.展示用户的评论
+    comments = []
+    try:
+        comments = Comment.query.filter(Comment.news_id==news_id).order_by(Comment.create_time.desc()).all()
+    except Exception as e:
+        current_app.logger.error(e)
+
+    # 界面渲染数据时经过一个处理的
+    comment_dict_list = []
+    for comment in comments:
+        comment_dict = comment.to_dict()
+        comment_dict_list.append(comment_dict)
+
 
     context = {
         'user':user,
         'news_clicks':news_clicks,
         'news':news.to_dict(),
-        'is_collected':is_collected
+        'is_collected':is_collected,
+        'comments':comment_dict_list
     }
 
     # 渲染模板
