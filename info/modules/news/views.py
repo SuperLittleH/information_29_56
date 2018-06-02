@@ -1,10 +1,64 @@
-# 新闻详情
+# 新闻详情和评论
 from flask import  render_template,session,current_app,abort,g,jsonify,request
 from . import news_blue
-from info.models import User,News
+from info.models import User,News,Comment
 from info import constants,db,response_code
 from info.utils.comment import user_login_data
 
+@news_blue.route('/news_comment',methods=["POST"])
+@user_login_data
+def news_comment():
+    """新闻评论和回复评论"""
+    # 1.获取登录用户的信息
+    user = g.user
+    if not user:
+        return jsonify(errno=response_code.RET.SESSIONERR, errmsg="用户未登录")
+
+    # 2.接受参数
+    news_id = request.json.get('news_id')
+    comment_content = request.json.get('comment')
+    parent_id = request.json.get('parent_id')
+
+    # 3.校验参数
+    if not all([news_id,comment_content]):
+        return jsonify(errno=response_code.RET.PARAMERR, errmsg="缺少参数")
+    try:
+        news_id = int(news_id)
+        if parent_id:
+            parent_id = int(parent_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=response_code.RET.PARAMERR, errmsg="参数错误")
+
+    # 4.查询要评论的新闻是否存在
+    try:
+        news = News.query.get(news_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=response_code.RET.DBERR, errmsg="查询新闻数据失败")
+    if not news:
+        return jsonify(errno=response_code.RET.NODATA, errmsg="新闻数据不存在")
+
+    # 5.实现新闻评论和回复评论逻辑
+    comment = Comment()
+    comment.user_id = user.id
+    comment.news_id = news.id
+    comment.content = comment_content
+
+    # 回复评论
+    if parent_id:
+        comment.parent_id = parent_id
+
+    # 同步数据到数据库
+    try:
+        db.session.add(comment)
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(e)
+
+    # 6.响应评论结果
+    return jsonify(errno=response_code.RET.OK, errmsg="ok",data=comment.to_dict())
 
 @news_blue.route('/news_collect',methods=['POST'])
 @user_login_data
