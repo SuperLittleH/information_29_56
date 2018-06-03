@@ -46,6 +46,7 @@ def base_info():
         except Exception as e:
             db.session.rollback()
             current_app.logger.error(e)
+            return jsonify(errno=response_code.RET.DBERR, errmsg="修改用户资料失败")
 
         # 4.注意:修改了昵称以后记得将状态保持中的昵称也修改
         session['nick_name'] = nick_name
