@@ -251,6 +251,7 @@ def news_detail(news_id):
         comment_dict['is_like'] = False
         if comment.id in comment_like_ids:
             comment_dict['is_like'] = True
+
         comment_dict_list.append(comment_dict)
 
 
