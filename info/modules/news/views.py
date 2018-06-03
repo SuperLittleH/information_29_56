@@ -32,6 +32,8 @@ def comment_like():
     except Exception as e:
         current_app.logger.error(e)
         return jsonify(errno=response_code.RET.DBERR, errmsg="查询评论失败")
+    if not comment:
+        return jsonify(errno=response_code.RET.NODATA, errmsg="评论不存在")
 
     # 5.查询要点赞的评论的赞是否存在:查询等前用户是否给当前的评论点过赞
     try:
