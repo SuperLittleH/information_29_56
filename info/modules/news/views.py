@@ -233,15 +233,24 @@ def news_detail(news_id):
         current_app.logger.error(e)
 
     # 7.展示评论点的赞
+    comment_like_ids = []
+    if user:
+        try:
+            # 查询用户点赞了那些评论
+            comment_likes = CommentLike.query.filter(CommentLike.user_id==user.id).all()
+            # 取出所用被用户点赞的评论id
+            comment_like_ids = [comment_like.comment_id for comment_like in comment_likes]
+        except Exception as e:
+            current_app.logger.error(e)
 
     # 界面渲染数据时经过一个处理的
     comment_dict_list = []
     for comment in comments:
         comment_dict = comment.to_dict()
         # 给comment_dict追加一个is_like记录该评论是否被登录用户点赞了
-        comment_dict['is_like'] = True
-        # if
-        #     comment_dict['is_like'] = True
+        comment_dict['is_like'] = False
+        if comment.id in comment_like_ids:
+            comment_dict['is_like'] = True
         comment_dict_list.append(comment_dict)
 
 
