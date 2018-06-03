@@ -186,6 +186,8 @@ def news_detail(news_id):
     3.查询新闻详情
     4.累加点击量
     5.收藏和取消收藏
+    6.展示用户的评论
+    7.展示评论点的赞
     """
     # 1.查询用户信息
     # 使用装饰器的g变量读取登录信息
@@ -230,10 +232,16 @@ def news_detail(news_id):
     except Exception as e:
         current_app.logger.error(e)
 
+    # 7.展示评论点的赞
+
     # 界面渲染数据时经过一个处理的
     comment_dict_list = []
     for comment in comments:
         comment_dict = comment.to_dict()
+        # 给comment_dict追加一个is_like记录该评论是否被登录用户点赞了
+        comment_dict['is_like'] = True
+        # if
+        #     comment_dict['is_like'] = True
         comment_dict_list.append(comment_dict)
 
 
