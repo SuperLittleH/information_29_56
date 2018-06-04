@@ -5,6 +5,50 @@ from info.utils.comment import user_login_data
 from info import response_code,db,constants
 from info.utils.file_storage import upload_file
 
+@user_blue.route('/user_collection')
+@user_login_data
+def user_collection():
+    """用户收藏"""
+
+    # 1.获取用户登陆信息
+    user = g.user
+    if not user:
+        return redirect(url_for('index.index'))
+
+    # 2.接受参数
+    page = request.args.get('p','1')
+
+    # 3.校验参数
+    try:
+        page = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        page ='1'
+
+    # 4.分页查询
+    paginate = None
+    try:
+        paginate = user.collection_news.paginate(page,constants.USER_COLLECTION_MAX_NEWS,False)
+    except Exception as e:
+        current_app.logger.error(e)
+
+    # 5.构造渲染模板的数据
+    news_list = paginate.items
+    total_page = paginate.pages
+    current_page = paginate.page
+
+    news_dict_list = []
+    for news in news_list:
+        news_dict_list.append(news.to_dict())
+
+    context = {
+        'news_list':news_dict_list,
+        'total_page':total_page,
+        'current_page':current_page
+    }
+    # 渲染模板
+    return render_template('news/user_collection.html',context=context)
+
 @user_blue.route('/pass_info',methods=['GET','POST'])
 @user_login_data
 def pass_info():
