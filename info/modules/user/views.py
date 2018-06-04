@@ -2,9 +2,10 @@
 from . import user_blue
 from flask import  render_template,g,redirect,url_for,request,jsonify,current_app,session
 from info.utils.comment import user_login_data
-from info import response_code,db
+from info import response_code,db,constants
+from info.utils.file_storage import upload_file
 
-@user_blue.route('pic_info',methods=['GET','POST'])
+@user_blue.route('/pic_info',methods=['GET','POST'])
 @user_login_data
 def pic_info():
     """设置头像"""
@@ -26,7 +27,39 @@ def pic_info():
 
     # 3.post请求逻辑:上传图片
     if request.method == "POST":
-        pass
+        # 3.1获取参数
+        avatar_file = request.files.get('avatar')
+
+        # 3.2校验参数
+        try:
+            avatar_data = avatar_file.read()
+        except Exception as e:
+            current_app.logger.error(e)
+            return jsonify(errno=response_code.RET.PARAMERR, errmsg="读取头像数据失败")
+
+        # 3.3调用上传的方法,将图片上传至七牛
+        try:
+            key = upload_file(avatar_data)
+        except Exception as e:
+            current_app.logger.error(e)
+            return jsonify(errno=response_code.RET.THIRDERR, errmsg="上传失败")
+
+        # 3.4保存用户头像的key到数据库
+        user.avatar_url = key
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(e)
+            return jsonify(errno=response_code.RET.DBERR, errmsg="保存用户头像失败")
+
+        data = {
+            'avatar_url': constants.QINIU_DOMIN_PREFIX + key
+        }
+
+        # 3.5响应头像的上传的结果
+        return jsonify(errno=response_code.RET.OK, errmsg="上传成功", data=data)
+
 
 @user_blue.route('/base_info',methods=['GET','POST'])
 @user_login_data
