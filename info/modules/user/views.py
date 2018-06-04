@@ -4,6 +4,30 @@ from flask import  render_template,g,redirect,url_for,request,jsonify,current_ap
 from info.utils.comment import user_login_data
 from info import response_code,db
 
+@user_blue.route('pic_info',methods=['GET','POST'])
+@user_login_data
+def pic_info():
+    """设置头像"""
+
+    # 1.获取登陆信息
+    user = g.user
+    if not user:
+        return redirect(url_for('index.index'))
+
+    # 2.实现get请求逻辑
+    if request.method == "GET":
+        # 构造渲染数据的上下文
+        context = {
+            'user':user
+        }
+
+        # 渲染界面
+        return render_template('news/user_pic_info.html',context=context)
+
+    # 3.post请求逻辑:上传图片
+    if request.method == "POST":
+        pass
+
 @user_blue.route('/base_info',methods=['GET','POST'])
 @user_login_data
 def base_info():
