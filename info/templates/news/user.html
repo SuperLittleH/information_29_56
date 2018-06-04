@@ -12,9 +12,13 @@
 	<div class="conter_con">
 		<div class="user_menu_con fl">
 			<div class="user_center_pic">
-				<img src="../../static/news/images/user_pic.png" alt="用户图片">
+				<img src={% if context.user.avatar_url %}
+                    {{ context.user.avatar_url }}
+                {% else %}
+                    "../../static/news/images/user_pic.png"
+                {% endif %} alt="用户图片">
 			</div>
-			<div class="user_center_name">用户张山</div>
+			<div class="user_center_name">{{ context.user.nick_name }}</div>
 
 			<ul class="option_list">
 				<li class="active"><a href="{{ url_for('user.base_info') }}" target="main_frame">基本资料</a></li>
