@@ -94,7 +94,7 @@ def index():
 
     # 构造渲染模板的上下文数据
     context = {
-        'user':user,
+        'user':user.to_dict() if user else None,
         "news_clicks": news_clicks,
         'categories':categories
 

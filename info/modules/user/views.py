@@ -19,7 +19,7 @@ def pic_info():
     if request.method == "GET":
         # 构造渲染数据的上下文
         context = {
-            'user':user
+            'user':user.to_dict()
         }
 
         # 渲染界面
@@ -75,7 +75,7 @@ def base_info():
     if request.method == "GET":
         # 构造渲染数据的上下文
         context = {
-            'user':user
+            'user':user.to_dict()
         }
         # 渲染界面
         return render_template('news/user_base_info.html',context=context)
@@ -123,7 +123,7 @@ def user_info():
         return redirect(url_for('index.index'))
 
     context = {
-        'user':user
+        'user':user.to_dict()
     }
 
     return render_template('news/user.html',context=context)
