@@ -15,6 +15,12 @@ def admin_login():
     """登陆"""
     # get提供登陆界面
     if request.method == "GET":
+        # 获取用户登陆信息,如果用户登陆直接进入主页
+        user_id = session.get('user_id', None)
+        is_admin = session.get('is_admin', False)
+        if user_id and is_admin:
+            return redirect(url_for('admin.admin_index'))
+
         return render_template('admin/login.html')
 
     # POST
