@@ -4,6 +4,38 @@ from flask import  render_template,g,redirect,url_for,request,jsonify,current_ap
 from info.utils.comment import user_login_data
 from info import response_code,db,constants
 from info.utils.file_storage import upload_file
+from info.models import Category
+
+@user_blue.route('/news_release',methods=["GET","POST"])
+@user_login_data
+def user_news_release():
+    """新闻发布"""
+    # 1.获取登录用户信息
+    user = g.user
+    if not user:
+        return redirect(url_for('index.index'))
+
+    # 2.get请求的逻辑:渲染发布新闻的界面
+    if request.method == 'GET':
+        # 2.1渲染新闻分类数据
+        categories = []
+        try:
+            categories = Category.query.all()
+        except Exception as e:
+            current_app.logger.error(e)
+
+        # 删除最新类
+        categories.pop(0)
+
+        context = {
+            'categories':categories
+        }
+
+        return render_template('news/user_news_release.html',context=context)
+
+    # 3.POST请求逻辑:实现新闻发布的逻辑
+    if request.method == 'POST':
+        pass
 
 @user_blue.route('/user_collection')
 @user_login_data
