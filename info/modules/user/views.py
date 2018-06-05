@@ -6,6 +6,52 @@ from info import response_code,db,constants
 from info.utils.file_storage import upload_file
 from info.models import Category,News
 
+
+@user_blue.route('/news_list')
+@user_login_data
+def user_news_list():
+    """我发布的新闻列表"""
+    # 1.获取登录用户信息
+    user = g.user
+    if not user:
+        return redirect(url_for('index.index'))
+
+    # 2.接受参数
+    page = request.args.get('p','1')
+
+    # 3.校验参数
+    try:
+        page = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        page = '1'
+
+    # 4.分页查询
+    news_list = []
+    current_page = 1
+    total_page = 1
+    try:
+        paginate = News.query.filter(News.user_id==user.id).paginate(page,constants.USER_COLLECTION_MAX_NEWS,False)
+        # 5.构造渲染模板的数据
+        news_list = paginate.items
+        current_page = paginate.page
+        total_page = paginate.pages
+    except Exception as e:
+        current_app.logger.error(e)
+
+    news_dict_list = []
+    for news in news_list:
+        news_dict_list.append(news.to_basic_dict())
+
+    context = {
+        'news_list':news_dict_list,
+        'current_page':current_page,
+        'total_page':total_page
+    }
+
+    # 6.渲染界面
+    return render_template('news/user_news_list.html',context=context)
+
 @user_blue.route('/news_release',methods=["GET","POST"])
 @user_login_data
 def user_news_release():
