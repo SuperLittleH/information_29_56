@@ -1,13 +1,24 @@
 # 后台管理
 from . import admin_blue
-from flask import render_template,request,current_app,session,redirect,url_for
+from flask import render_template,request,current_app,session,redirect,url_for,g
 from info.models import User
-
+from info.utils.comment import user_login_data
 
 @admin_blue.route('/')
+@user_login_data
 def admin_index():
     """主页"""
-    return render_template('admin/index.html')
+    # 获取登陆用户信息
+    user = g.user
+    if not user:
+        return redirect(url_for('admin.admin_index'))
+    # 构造渲染数据
+    context = {
+        'user': user.to_dict()
+    }
+    # 渲染模板
+    return render_template('admin/index.html', context=context)
+
 
 
 @admin_blue.route('/login',methods=['GET','POST'])
