@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,g,render_template
 from flask_sqlalchemy import SQLAlchemy
 from redis import StrictRedis
 from flask_wtf.csrf import CSRFProtect,generate_csrf
@@ -60,6 +60,17 @@ def create_app(config_name):
     # 将自定义的过滤器函数添加到app过滤器列表中
     from info.utils.comment import do_ranK
     app.add_template_filter(do_ranK, 'rank')
+
+    from info.utils.comment import user_login_data
+    @app.errorhandler(404)
+    @user_login_data
+    def page_not_found(e):
+        """友好的404页面"""
+        user = g.user
+        context = {
+            'user':user.to_dict() if user else None
+        }
+        return render_template('news/404.html',context=context)
 
     # 指定session数据存储在后端的位置
     Session(app)
