@@ -87,5 +87,8 @@ def create_app(config_name):
     # 注册蓝图
     from info.modules.user import user_blue
     app.register_blueprint(user_blue)
+    # 注册蓝图
+    from info.modules.admin import admin_blue
+    app.register_blueprint(admin_blue)
 
     return app
