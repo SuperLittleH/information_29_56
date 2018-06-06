@@ -6,6 +6,29 @@ from info.utils.comment import user_login_data
 import time,datetime
 from info import constants
 
+
+@admin_blue.route('/news_review_detail/<int:news_id>')
+def news_review_detail(news_id):
+    """待审核新闻详情"""
+
+    # 1.查询出要审核的新闻的详情
+    news = None
+    try:
+        news = News.query.get(news_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        abort(404)
+    if not news:
+        abort(404)
+
+    # 2.构造渲染数据
+    context = {
+        'news':news.to_dict()
+    }
+
+
+    return render_template('admin/news_review_detail.html',context=context)
+
 @admin_blue.route('/news_review')
 def news_review():
     """后台新闻审核列表"""
