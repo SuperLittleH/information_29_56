@@ -41,7 +41,7 @@ def user_news_list():
 
     news_dict_list = []
     for news in news_list:
-        news_dict_list.append(news.to_basic_dict())
+        news_dict_list.append(news.to_review_dict())
 
     context = {
         'news_list':news_dict_list,

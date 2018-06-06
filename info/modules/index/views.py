@@ -31,9 +31,9 @@ def index_news_list():
     # 3.根据参数查询用户想看的新闻列表
     if cid == 1:
         # 从所有新闻中，根据时间倒序，每页取出10条数据
-        paginate = News.query.order_by(News.create_time.desc()).paginate(page,per_page,False)
+        paginate = News.query.filter(News.status==0).order_by(News.create_time.desc()).paginate(page,per_page,False)
     else:
-        paginate = News.query.filter(News.category_id == cid).order_by(News.create_time.desc()).paginate(page,per_page,False)
+        paginate = News.query.filter(News.status==0,News.category_id == cid).order_by(News.create_time.desc()).paginate(page,per_page,False)
 
     # 4.构造相应的新闻的列表数据
     #     取出当前页的所有模型对象
