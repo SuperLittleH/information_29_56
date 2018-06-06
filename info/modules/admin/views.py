@@ -11,7 +11,7 @@ def admin_index():
     # 获取登陆用户信息
     user = g.user
     if not user:
-        return redirect(url_for('admin.admin_index'))
+        return redirect(url_for('admin.admin_login'))
     # 构造渲染数据
     context = {
         'user': user.to_dict()
