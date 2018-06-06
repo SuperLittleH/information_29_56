@@ -40,14 +40,49 @@ def user_count():
     except Exception as e:
         current_app.logger.error(e)
 
+    # 每日用户登陆用户活跃量
+    # 存放时间节点
+    active_date = []
+    # 存放活跃量
+    active_count = []
+
+    # 查询今天开始的时间
+    # 获取当天开始时间字符串
+    today_begin = '%d-%02d-%02d' % (t.tm_year, t.tm_mon, t.tm_mday)
+    # 获取开始时间对象
+    today_begin_date = datetime.datetime.strptime(today_begin, '%Y-%m-%d')
+
+    for i in range(0, 15):
+        # 计算一天开始
+        begin_date = today_begin_date - datetime.timedelta(days=i)
+        # 计算一天结束
+        end_date = today_begin_date - datetime.timedelta(days=(i - 1))
+
+        # 将x轴对应的开始时间记录
+        active_date.append(datetime.datetime.strftime(begin_date, '%Y-%m-%d'))
+
+        #     查询当天的用户的用户量
+        try:
+            count = User.query.filter(User.is_admin == False, User.last_login >= begin_date,
+                                      User.last_login < end_date).count()
+            active_count.append(count)
+        except Exception as e:
+            current_app.logger.error(e)
+
+    # 反转列表保证时间从左至右时递增
+    active_date.reverse()
+    active_count.reverse()
 
     context = {
-        'total_count':total_count,
-        'month_count':month_count,
-        'day_count':day_count
+        'total_count': total_count,
+        'month_count': month_count,
+        'day_count': day_count,
+        'active_date': active_date,
+        'active_count': active_count
+
     }
 
-    return render_template('admin/user_count.html',context=context)
+    return render_template('admin/user_count.html', context=context)
 
 @admin_blue.route('/')
 @user_login_data
