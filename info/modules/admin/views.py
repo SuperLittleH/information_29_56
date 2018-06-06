@@ -4,6 +4,28 @@ from flask import render_template,request,current_app,session,redirect,url_for,g
 from info.models import User
 from info.utils.comment import user_login_data
 
+
+@admin_blue.route('/user_count)')
+def user_count():
+    """用户量统计"""
+    # 1.用户总数
+    total_count = 0
+
+    # 2.月新增数
+    month_count = 0
+
+
+    # 3.日新增数
+    day_count = 0
+
+    context = {
+        'total_count':total_count,
+        'month_count':month_count,
+        'day_count':day_count
+    }
+
+    return render_template('admin/user_count.html',context=context)
+
 @admin_blue.route('/')
 @user_login_data
 def admin_index():
