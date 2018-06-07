@@ -15,5 +15,5 @@ def check_admin():
     # 2.1前台可以登陆但是登陆不上后台主页
     # 2.2如果是后台用户可以登陆
     # 3.如果管理员登陆了后台管理又进入前台会留下session
-    if not is_admin and not request.url.endswith('/admin/login') :
+    if not is_admin and not request.url.endswith('/admin/login') and not request.url.endswith('/admin/user_count'):
         return redirect(url_for('index.index'))
