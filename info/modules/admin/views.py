@@ -7,6 +7,51 @@ import time,datetime
 from info import constants,response_code,db
 
 
+
+@admin_blue.route('/news_edit')
+def news_edit():
+    """新闻版式编辑列表"""
+    # 1.接受参数
+    page = request.args.get('p','1')
+
+    # 2.校验参数
+    try:
+        page = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        page = '1'
+
+    # 3.分页查询
+    news_list = []
+    total_page = 1
+    current_page = 1
+    try:
+        paginate = News.query.filter(News.status == 0).order_by(News.create_time.desc()).paginate(page,constants.ADMIN_NEWS_PAGE_MAX_COUNT,False)
+        # paginate = News.query.filter(News.status==0).paginate(page,constants.ADMIN_NEWS_PAGE_MAX_COUNT,False)
+        news_list = paginate.items
+        total_page = paginate.pages
+        current_page = paginate.page
+    except Exception as e:
+        current_app.logger.error(e)
+        abort(404)
+
+    # 4.构造渲染数据
+    news_dict_list = []
+    for news in news_list:
+        news_dict_list.append(news.to_review_dict())
+
+    context = {
+        'news_list':news_dict_list,
+        'total_page':total_page,
+        'current_page':current_page
+    }
+
+
+    # 5.响应结果
+
+    return render_template('admin/news_edit.html',context=context)
+
+
 @admin_blue.route('/news_review_action',methods=['POST'])
 def news_review_action():
     """审核新闻的实现"""
