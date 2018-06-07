@@ -7,6 +7,34 @@ import time,datetime
 from info import constants,response_code,db
 from info.utils.file_storage import upload_file
 
+
+
+@admin_blue.route('/news_type',methods=['GET','POST'])
+def news_type():
+    """新闻分页管理"""
+
+    # 渲染新闻分类界面
+    if request.method == 'GET':
+        # 查询新闻分类数据
+        categories = []
+        try:
+            categories = Category.query.all()
+            categories.pop(0)
+        except Exception as e:
+            current_app.logger.error(e)
+            abort(404)
+
+        context ={
+            'categories':categories
+        }
+
+
+        return render_template('admin/news_type.html',context = context)
+
+    # 修改和增加新闻分类
+    if request.method == 'POST':
+        pass
+
 @admin_blue.route('/news_edit_detail/<int:news_id>',methods=['GET','POST'])
 def news_edit_detail(news_id):
     """新闻版式编辑详情"""
