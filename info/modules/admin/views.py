@@ -76,7 +76,7 @@ def news_edit_detail(news_id):
                 current_app.logger.error(e)
                 return jsonify(errno=response_code.RET.THIRDERR, errmsg="上传失败")
 
-                news.index_image_url = constants.QINIU_DOMIN_PREFIX + key
+            news.index_image_url = constants.QINIU_DOMIN_PREFIX + key
 
         # 6.保存数据并同步到数据库
         news.title = title
