@@ -1,11 +1,42 @@
 # 后台管理
 from . import admin_blue
 from flask import render_template,request,current_app,session,redirect,url_for,g,abort,jsonify
-from info.models import User,News
+from info.models import User,News,Category
 from info.utils.comment import user_login_data
 import time,datetime
 from info import constants,response_code,db
 
+
+@admin_blue.route('/news_edit_detail/<int:news_id>')
+def news_edit_detail(news_id):
+    """新闻版式编辑详情"""
+
+    #查询要编辑的新闻
+    news = None
+    try:
+        news = News.query.get(news_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        abort(404)
+    if not news:
+        abort(404)
+
+    # 查询分类
+    categories = []
+    try:
+        categories = Category.query.all()
+        categories.pop(0)
+    except Exception as e:
+        current_app.logger.error(e)
+        abort(404)
+
+    # 构造渲染数据
+    context = {
+         'news':news.to_dict(),
+         'categories':categories
+     }
+
+    return render_template('admin/news_edit_detail.html',context=context)
 
 
 @admin_blue.route('/news_edit')
