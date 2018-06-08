@@ -115,8 +115,8 @@
                     <div class="writings"><span>总篇数</span><b>{{ context.news.author.news_count }}</b></div>
                     <div class="follows"><span>粉丝</span><b>{{ context.news.author.followers_count }}</b></div>
 
-                    <a href="javascript:;" class="focus fr" data-userid="{{ context.news.author.id }}">关注</a>
-                    <a href="javascript:;" class="focused fr" data-userid="{{ context.news.author.id }}"><span class="out">已关注</span><span class="over">取消关注</span></a>
+                    <a href="javascript:;" class="focus fr" data-userid="{{ context.news.author.id }}" style="display: {% if context.is_followed %}none{% else %}block{% endif %}">关注</a>
+                    <a href="javascript:;" class="focused fr" data-userid="{{ context.news.author.id }}" style="display: {% if context.is_followed %}block{% else %}none{% endif %}"><span class="out">已关注</span><span class="over">取消关注</span></a>
                 </div>
             {% endif %}
             <div class="rank_title">

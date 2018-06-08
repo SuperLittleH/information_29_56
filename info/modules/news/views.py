@@ -188,6 +188,7 @@ def news_detail(news_id):
     5.收藏和取消收藏
     6.展示用户的评论
     7.展示评论点的赞
+    8.关注和取消关注
     """
     # 1.查询用户信息
     # 使用装饰器的g变量读取登录信息
@@ -254,13 +255,21 @@ def news_detail(news_id):
 
         comment_dict_list.append(comment_dict)
 
+    # 8.关注和取消关注
+    is_followed = False
+
+    # 当用户已登录且登录用户正在看的新闻有作者
+    if user and user:
+        if news.user in user.followed:
+            is_followed = True
 
     context = {
         'user':user.to_dict() if user else None,
         'news_clicks':news_clicks,
         'news':news.to_dict(),
         'is_collected':is_collected,
-        'comments':comment_dict_list
+        'comments':comment_dict_list,
+        'is_followed':is_followed
     }
 
     # 渲染模板
