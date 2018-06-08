@@ -1,10 +1,58 @@
 # 个人中心
 from . import user_blue
-from flask import  render_template,g,redirect,url_for,request,jsonify,current_app,session
+from flask import  render_template,g,redirect,url_for,request,jsonify,current_app,session,abort
 from info.utils.comment import user_login_data
 from info import response_code,db,constants
 from info.utils.file_storage import upload_file
 from info.models import Category,News
+
+
+@user_blue.route('/user_follow')
+@user_login_data
+def user_followed():
+    """我的关注"""
+
+    # 1.获取登录用户信息
+    login_user = g.user
+    if not login_user:
+        return redirect(url_for('index.index'))
+
+    # 2.接受参数
+    page = request.args.get('p','1')
+
+    # 3.校验参数
+    try:
+        page = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        page = '1'
+
+    # 4.查询登陆用户关注的用户
+    followed_user_list = []
+    total_page = 1
+    current_page = 1
+    try:
+        paginate = login_user.followed.paginate(page,constants.USER_FOLLOWED_MAX_COUNT,False)
+        followed_user_list = paginate.items
+        total_page = paginate.pages
+        current_page = paginate.page
+    except Exception as e:
+        current_app.logger.error(e)
+        abort(404)
+
+    # 5.构造渲染数据
+    followed_dict_list = []
+    for followed_user in followed_user_list:
+        followed_dict_list.append(followed_user.to_dict())
+
+    context = {
+        'users':followed_dict_list,
+        'total_page':total_page,
+        'current_page':current_page
+    }
+
+    # 6.响应结果
+    return render_template('news/user_follow.html',context=context)
 
 
 @user_blue.route('/news_list')
