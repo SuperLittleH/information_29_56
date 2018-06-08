@@ -33,7 +33,41 @@ def news_type():
 
     # 修改和增加新闻分类
     if request.method == 'POST':
-        pass
+        # 1.接收参数
+        cname = request.json.get('name')
+        cid = request.json.get('id')
+
+        # 校验参数
+        if not cname:
+            return jsonify(errno=response_code.RET.PARAMERR, errmsg="缺少参数")
+
+        # 根据是否有cid判断是增加分类还是修改分类
+        if cid:
+            # 修改分类
+            try:
+                category = Category.query.get(cid)
+            except Exception as e:
+                current_app.logger.error(e)
+                return jsonify(errno=response_code.RET.DBERR, errmsg="查询分类数据失败")
+            if not category:
+                return jsonify(errno=response_code.RET.NODATA, errmsg="分类不存在")
+                # 修改分类名字
+            category.name = cname
+        else:
+            # 增加分类
+            category = Category()
+            category.name = cname
+            db.session.add(category)
+        # 同步数据库
+        try:
+
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(e)
+            return jsonify(errno=response_code.RET.DBERR, errmsg="保存分类数据失败")
+
+        return jsonify(errno=response_code.RET.OK, errmsg="OK")
 
 @admin_blue.route('/news_edit_detail/<int:news_id>',methods=['GET','POST'])
 def news_edit_detail(news_id):
