@@ -6,6 +6,61 @@ from info import constants,db,response_code
 from info.utils.comment import user_login_data
 
 
+@news_blue.route('/followed_user',methods=['POST'])
+@user_login_data
+def followed_user():
+    # 关注和取消关注
+
+    # 1.获取登录用户的信息
+    login_user = g.user
+    if not login_user:
+        return jsonify(errno=response_code.RET.SESSIONERR, errmsg="用户未登录")
+
+    # 2.接受参数
+    user_id = request.json.get('user_id')
+    action = request.json.get('action')
+
+    # 3.校验参数
+    if not all([user_id,action]):
+        return jsonify(errno=response_code.RET.PARAMERR, errmsg="缺少参数")
+    if action not in ['follow','unfollow']:
+        return jsonify(errno=response_code.RET.PARAMERR, errmsg="参数错误")
+
+    # 4.查询要关注的人是否存在
+    try:
+        other = User.query.get(user_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=response_code.RET.DBERR, errmsg="查询用户失败")
+    if not other:
+        return jsonify(errno=response_code.RET.NODATA, errmsg="用户不存在")
+
+    # 5.实现关注和取消关注
+    if action == 'follow':
+        # 关注
+        if other not in login_user.followed:
+            login_user.followed.append(other)
+        else:
+            return jsonify(errno=response_code.RET.DATAEXIST, errmsg="已关注")
+    else:
+        # 取消关注
+        if other in login_user.followed:
+            login_user.followed.remove(other)
+        else:
+            return jsonify(errno=response_code.RET.DATAEXIST, errmsg="未关注")
+
+    # 6.同步到数据库
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.error(e)
+        return jsonify(errno=response_code.RET.DBERR, errmsg="保存到数据库失败")
+
+    # 7.响应结果
+    return jsonify(errno=response_code.RET.OK, errmsg="OK")
+
+
 @news_blue.route('/comment_like',methods=['POST'])
 @user_login_data
 def comment_like():

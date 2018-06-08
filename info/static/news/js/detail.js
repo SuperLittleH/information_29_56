@@ -11,7 +11,7 @@ $(function(){
         $('.login_form_con').show();
     })
 
-  // 收藏
+    // 收藏
     $(".collection").click(function () {
         // 参数：要收藏哪条新闻
         var params = {
@@ -40,8 +40,7 @@ $(function(){
         });
     });
 
-
-     // 取消收藏
+    // 取消收藏
     $(".collected").click(function () {
         // 参数：要取消收藏哪条新闻
         var params = {
@@ -74,6 +73,7 @@ $(function(){
     // 评论提交
     $(".comment_form").submit(function (e) {
         e.preventDefault();
+
         var news_id = $(this).attr('data-newsid')
         var news_comment = $(".comment_input").val();
 
@@ -128,16 +128,15 @@ $(function(){
                     // 清空输入框内容
                     $(".comment_input").val("")
 
+
                     // 更新评论条数
                     updateCommentCount()
-
                 }else {
                     alert(resp.errmsg)
                 }
             }
         })
     });
-
 
     $('.comment_list_con').delegate('a,input','click',function(){
 
@@ -153,7 +152,7 @@ $(function(){
             $(this).parent().toggle();
         }
 
-       // TODO:点赞
+        // TODO ： 点赞
         if(sHandler.indexOf('comment_up')>=0)
         {
             var $this = $(this);
@@ -182,7 +181,7 @@ $(function(){
                 data: JSON.stringify(params),
                 success: function (resp) {
                     if (resp.errno == "0") {
-                       var like_count = $this.attr('data-likecount')
+                        var like_count = $this.attr('data-likecount')
 
                         if (like_count == undefined) {
                             like_count = 0
@@ -213,7 +212,8 @@ $(function(){
             })
         }
 
-        //TODO:回复评论
+
+        // TODO : 回复评论
         if(sHandler.indexOf('reply_sub')>=0)
         {
             var $this = $(this)
@@ -280,7 +280,6 @@ $(function(){
 
                         // 更新评论条数
                         updateCommentCount()
-
                     }else {
                         alert(resp.errmsg)
                     }
@@ -291,17 +290,76 @@ $(function(){
 
         // 关注当前新闻作者
     $(".focus").click(function () {
-
+        var user_id = $(this).attr('data-userid')
+        var params = {
+            "action": "follow",
+            "user_id": user_id
+        }
+        $.ajax({
+            url: "/news/followed_user",
+            type: "post",
+            contentType: "application/json",
+            headers: {
+                "X-CSRFToken": getCookie("csrf_token")
+            },
+            data: JSON.stringify(params),
+            success: function (resp) {
+                if (resp.errno == "0") {
+                    // 关注成功
+                    var count = parseInt($(".follows b").html());
+                    count++;
+                    $(".follows b").html(count + "")
+                    $(".focus").hide()
+                    $(".focused").show()
+                }else if (resp.errno == "4101"){
+                    // 未登录，弹出登录框
+                    $('.login_form_con').show();
+                }else {
+                    // 关注失败
+                    alert(resp.errmsg)
+                }
+            }
+        })
     })
 
     // 取消关注当前新闻作者
     $(".focused").click(function () {
-
+        var user_id = $(this).attr('data-userid')
+        var params = {
+            "action": "unfollow",
+            "user_id": user_id
+        }
+        $.ajax({
+            url: "/news/followed_user",
+            type: "post",
+            contentType: "application/json",
+            headers: {
+                "X-CSRFToken": getCookie("csrf_token")
+            },
+            data: JSON.stringify(params),
+            success: function (resp) {
+                if (resp.errno == "0") {
+                    // 取消关注成功
+                    var count = parseInt($(".follows b").html());
+                    count--;
+                    $(".follows b").html(count + "")
+                    $(".focus").show()
+                    $(".focused").hide()
+                }else if (resp.errno == "4101"){
+                    // 未登录，弹出登录框
+                    $('.login_form_con').show();
+                }else {
+                    // 取消关注失败
+                    alert(resp.errmsg)
+                }
+            }
+        })
     })
 })
 
+
 // 更新评论条数
 function updateCommentCount() {
-    var count = $(".comment_list").length;
-    $(".comment_count").html(count + "条评论");
+    var count = $('.comment_list').length; 
+    $('.comment_count').html(count + '条评论');
 }
