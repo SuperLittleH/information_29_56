@@ -7,6 +7,22 @@ from info.utils.file_storage import upload_file
 from info.models import Category,News
 
 
+@user_blue.route('/other_info')
+@user_login_data
+def other_info():
+    """其他用户概况"""
+
+    # 1.获取登陆用户信息
+    login_user = g.user
+    if not login_user:
+        return redirect(url_for('index.index'))
+
+    context = {
+        'user':login_user.to_dict()
+    }
+
+    return  render_template('news/other.html',context=context)
+
 @user_blue.route('/user_follow')
 @user_login_data
 def user_followed():
