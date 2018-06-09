@@ -7,6 +7,58 @@ from info.utils.file_storage import upload_file
 from info.models import Category,News,User
 
 
+@user_blue.route('/other_news_list')
+def other_news_list():
+    # 1.获取页数
+    page = request.args.get("p", '1')
+    other_id = request.args.get("user_id")
+
+    # 2.校验参数
+    try:
+        p = int(page)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=response_code.RET.PARAMERR, errmsg='参数错误')
+
+    if not all([page, other_id]):
+        return jsonify(errno=response_code.RET.PARAMERR, errmsg='缺少参数')
+
+    # 3.查询用户数据
+    try:
+        user = User.query.get(other_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=response_code.RET.DBERR, errmsg='查询用户数据失败')
+    if not user:
+        return jsonify(errno=response_code.RET.NODATA, errmsg='用户不存在')
+
+    # 4.分页查询
+    try:
+        paginate = News.query.filter(News.user_id == user.id).paginate(p, constants.OTHER_NEWS_PAGE_MAX_COUNT, False)
+        # 获取当前页数据
+        news_list = paginate.items
+        # 获取当前页
+        current_page = paginate.page
+        # 获取总页数
+        total_page = paginate.pages
+    except Exception as e:
+        current_app.logger.error(e)
+        return jsonify(errno=response_code.RET.DBERR, errmsg='查询用户数据失败')
+
+    # 5.构造响应数据
+    news_dict_list = []
+    for news_item in news_list:
+        news_dict_list.append(news_item.to_review_dict())
+
+    data = {
+        "news_list": news_dict_list,
+        "total_page": total_page,
+        "current_page": current_page
+    }
+
+    # 6.渲染界面
+    return jsonify(errno=response_code.RET.OK, errmsg='OK',data=data)
+
 @user_blue.route('/other_info')
 @user_login_data
 def other_info():
