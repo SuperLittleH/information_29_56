@@ -4,7 +4,7 @@ from flask import  render_template,g,redirect,url_for,request,jsonify,current_ap
 from info.utils.comment import user_login_data
 from info import response_code,db,constants
 from info.utils.file_storage import upload_file
-from info.models import Category,News
+from info.models import Category,News,User
 
 
 @user_blue.route('/other_info')
@@ -17,8 +17,31 @@ def other_info():
     if not login_user:
         return redirect(url_for('index.index'))
 
+    # 2.获取参数
+    other_id = request.args.get('user_id')
+    if not other_id:
+        abort(404)
+
+    # 查询被关注读的用户信息
+    other = None
+    try:
+        other = User.query.get(other_id)
+    except Exception as e:
+        current_app.logger.error(e)
+        abort(404)
+    if not other:
+        abort(404)
+
+    # 判断关注和取消关注的显示
+    is_followed = False
+    if login_user and other:
+        if other in login_user.followed:
+            is_followed = True
+
     context = {
-        'user':login_user.to_dict()
+        'user':login_user.to_dict(),
+        'other': other.to_dict(),
+        'is_followed': is_followed
     }
 
     return  render_template('news/other.html',context=context)
