@@ -105,12 +105,12 @@
         <div class="rank_con fr">
             {% if context.news.author %}
                 <div class="author_card">
-                    <a href="#" class="author_pic"><img src="{% if context.news.author.avatar_url %}
+                    <a href="{{ url_for('user.other_info') }}?user_id={{ context.news.author.id }}" class="author_pic"><img src="{% if context.news.author.avatar_url %}
                     {{ context.news.author.avatar_url }}
                     {% else %}
                     ../../static/news/images/user_pic.png
                     {% endif %}" alt="author_pic"></a>
-                    <a href="#" class="author_name">{{ context.news.author.nick_name }}</a>
+                    <a href="{{ url_for('user.other_info') }}?user_id={{ context.news.author.id }}" class="author_name">{{ context.news.author.nick_name }}</a>
                     <div class="author_resume">签名：{{ context.news.author.signature }}</div>
                     <div class="writings"><span>总篇数</span><b>{{ context.news.author.news_count }}</b></div>
                     <div class="follows"><span>粉丝</span><b>{{ context.news.author.followers_count }}</b></div>
